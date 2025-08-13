@@ -5,32 +5,30 @@ import {
   Delete,
   Get,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
+  Patch,
   Post,
-  Put,
   Query,
-  ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user-dto';
+import { GetUserParamDto } from './dtos/get-user-param.dto';
+import { UpdateUserDto } from './dtos/update-user-dto';
 
 @Controller('users')
 export class UsersController {
-    usersService: UsersService;
-
-    constructor() {
-        this.usersService = new UsersService()
+    constructor(private usersService: UsersService) {
+        
     }
 
   @Get(':isMarried')
   getUsers(
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Param('isMarried', ParseBoolPipe) isMarried: boolean,
+    @Param() param: GetUserParamDto
   ) {
     // return 'You made a GET request to get all users!'
-    console.log(limit, page, isMarried);
+    console.log(limit, page, param);
     // if(query.gender) {
     //     return UserService.getAllUsers().filter(u => u.gender === query.gender);
     // }
@@ -52,9 +50,10 @@ export class UsersController {
     console.log(user instanceof CreateUserDto);
     return 'A new user has been created!';
   }
-  @Put()
-  updateUsers() {
-    return 'You made a PUT request!';
+  @Patch()
+  updateUser(@Body() body: UpdateUserDto) {
+    console.log(body)
+    return 'User updated successfully!';
   }
   @Delete()
   deleteUsers() {
