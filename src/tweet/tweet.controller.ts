@@ -7,11 +7,11 @@ export class TweetController {
 
     @Get()
     public GetTweets() {
-        return this.tweetSerivce.getTweets();
+        
     }
 
     @Get(':userid')
     public GetTweetsById(@Param('userid', ParseIntPipe) userid: number) {
-        return this.tweetSerivce.getTweetsById(userid);
+        
     }
 }

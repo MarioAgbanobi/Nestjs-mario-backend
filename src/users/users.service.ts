@@ -1,33 +1,36 @@
-import { forwardRef, Inject, Injectable } from "@nestjs/common";
-import { AuthService } from "src/auth/auth.service";
+import { Injectable } from "@nestjs/common";
+import { Repository } from "typeorm";
+import { User } from "./user.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { CreateUserDto } from "./dtos/create-user-dto";
 
 @Injectable()
 export class UsersService {
-    constructor(@Inject(forwardRef(() => AuthService)) private readonly authService: AuthService){}
-
-    users: {id: number, name: string, email: string, gender: string, isMarried: boolean, password: string}[] = [
-        {id: 1, name: 'john', email: 'john@gmail.com', gender: 'male', isMarried: false, password: 'test1234'},
-        {id: 2, name: 'mark', email: 'mark@gmail.com', gender: 'male', isMarried: true, password: 'test1234'},
-        {id: 3, name: 'jane', email: 'jane@gmail.com', gender: 'female', isMarried: false, password: 'test1234'},
-    ]
+    constructor(
+        @InjectRepository(User)
+        private userRepository: Repository<User>
+    ){} 
 
 
     getAllUsers() {
-        if(this.authService.isAuthenticated){
-            return this.users;
-        }
-        return "You are not logged-in";
+        
     }
 
-    getUserById(id: number) {
-        const user = this.users.find(x => x.id === id);
-        if (!user) {
-            throw new Error(`User with ID ${id} not found`);
+    public async createUser(userDto: CreateUserDto) {
+        //Validata if auser exist with the given email
+        const user = await this.userRepository.findOne({
+            where: { email: userDto.email }
+        });
+        //Handle the error / exception
+        if(user){
+            return 'The user with the given email already exists!';
         }
-        return user;
-    }
 
-    createUser(user: {id: number, name: string, email: string, gender: string, isMarried: boolean, password: string}) {
-        this.users.push(user);
+        //Create that user
+        let newUser = this.userRepository.create(userDto);
+        newUser = await this.userRepository.save(newUser);
+        return newUser;
+
+
     }
 }
