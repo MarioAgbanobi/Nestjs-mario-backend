@@ -13,7 +13,7 @@ export class UsersService {
 
 
     getAllUsers() {
-        
+        return this.userRepository.find()
     }
 
     public async createUser(userDto: CreateUserDto) {

@@ -1,14 +1,8 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
-  Delete,
   Get,
-  Param,
-  ParseIntPipe,
-  Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dtos/create-user-dto';
@@ -25,4 +19,6 @@ export class UsersController {
   createUser(@Body() user: CreateUserDto) {
     this.usersService.createUser(user);
   }
+
+  
 }
