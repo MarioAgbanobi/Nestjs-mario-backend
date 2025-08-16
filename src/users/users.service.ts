@@ -3,12 +3,16 @@ import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDto } from "./dtos/create-user-dto";
+import { Profile } from "src/profile/profile.entity";
 
 @Injectable()
 export class UsersService {
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>
+        private userRepository: Repository<User>,
+
+        @InjectRepository(Profile)
+        private profileRepository: Repository<Profile>
     ){} 
 
 
@@ -17,20 +21,21 @@ export class UsersService {
     }
 
     public async createUser(userDto: CreateUserDto) {
-        //Validata if auser exist with the given email
-        const user = await this.userRepository.findOne({
-            where: { email: userDto.email }
-        });
-        //Handle the error / exception
-        if(user){
-            return 'The user with the given email already exists!';
-        }
+        
+        //Create a Profile & Save
+        userDto.profile = userDto.profile ?? {};
 
-        //Create that user
-        let newUser = this.userRepository.create(userDto);
-        newUser = await this.userRepository.save(newUser);
-        return newUser;
+        // let profile = this.profileRepository.create(userDto.profile);
+        // await this.profileRepository.save(profile);
 
+        //Create User Object
+        // let user = this.userRepository.create(userDto);
+        let user = this.userRepository.create(userDto as Partial<User>);
+        
+        //Set the Profile
+        // user.profile = profile;
 
+        //Save the User Object
+        return await this.userRepository.save(user);
     }
 }
