@@ -17,7 +17,11 @@ export class UsersService {
 
 
     getAllUsers() {
-        return this.userRepository.find()
+        return this.userRepository.find({
+            relations: {
+                profile: true
+            }
+        });
     }
 
     public async createUser(userDto: CreateUserDto) {
@@ -25,17 +29,31 @@ export class UsersService {
         //Create a Profile & Save
         userDto.profile = userDto.profile ?? {};
 
-        // let profile = this.profileRepository.create(userDto.profile);
-        // await this.profileRepository.save(profile);
-
         //Create User Object
         // let user = this.userRepository.create(userDto);
         let user = this.userRepository.create(userDto as Partial<User>);
         
-        //Set the Profile
-        // user.profile = profile;
-
         //Save the User Object
         return await this.userRepository.save(user);
     }
+
+    public async deleteUser(id: number) {
+        //Find the user with given ID
+        let user = await this.userRepository.findOneBy({id});
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        //Delete user
+        await this.userRepository.delete(id);
+
+        //Delete the profile
+        await this.profileRepository.delete(user.profile.id);
+
+        //Send a response
+        return {deleted: true}
+
+    }
+    
 }
