@@ -1,5 +1,5 @@
 import { User } from 'src/users/user.entity';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Profile {
@@ -47,8 +47,10 @@ export class Profile {
 
   @OneToOne(
   () => User, 
-  (user) => user.profile
+  (user) => user.profile,
+  { onDelete: 'CASCADE'}
   )
+  @JoinColumn()
   user: User;
   
 }

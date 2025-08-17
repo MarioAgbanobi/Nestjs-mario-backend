@@ -35,7 +35,7 @@ export class User {
         cascade: ['insert'],
         // eager: true
     })
-    @JoinColumn()
+    // @JoinColumn()
     profile: Profile;
 
     @CreateDateColumn()

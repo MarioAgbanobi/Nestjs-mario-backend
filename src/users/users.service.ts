@@ -39,17 +39,17 @@ export class UsersService {
 
     public async deleteUser(id: number) {
         //Find the user with given ID
-        let user = await this.userRepository.findOneBy({id});
+        // let user = await this.userRepository.findOneBy({id});
 
-        if (!user) {
-            throw new Error('User not found');
-        }
+        // if (!user) {
+        //     throw new Error('User not found');
+        // }
 
         //Delete user
         await this.userRepository.delete(id);
 
         //Delete the profile
-        await this.profileRepository.delete(user.profile.id);
+        // await this.profileRepository.delete(user.profile.id);
 
         //Send a response
         return {deleted: true}
